@@ -1,6 +1,7 @@
 # LaTeX Paper Template
 [![Build](https://github.com/Virtlink/latex-paper-template/actions/workflows/build.yml/badge.svg)](https://github.com/Virtlink/latex-paper-template/actions)
-[![GitHub](https://img.shields.io/github/license/Virtlink/latex-paper-template)](https://github.com/Virtlink/latex-paper-template/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/Virtlink/latex-paper-template)](https://github.com/Virtlink/latex-paper-template/blob/main/LICENSE)
+[![Artifact](https://img.shields.io/badge/artifact-latest-brightgreen)](https://nightly.link/Virtlink/latex-paper-template/workflows/build/main/paper.zip)
 
 This is an opinionated template for LaTeX papers that uses XeLaTeX and BibLaTeX.
 
@@ -48,7 +49,7 @@ make watch
 
 ### GitHub
 If the repository is on GitHub, it automatically builds a new version of the PDF on each push.
-Find the built paper as an artifact ZIP attached to each build on Github's _Actions_ page, such as [the latest artifact](https://nightly.link/Virtlink/latex-paper-template/workflows/build/main/paper.zip).
+Find the built paper as an artifact ZIP attached to each build on Github's _Actions_ page.
 
 ## Bibliography
 There are various tools to manage the bibliography in your paper.
