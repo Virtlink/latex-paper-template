@@ -1,5 +1,5 @@
 # LaTeX Paper Template
-[![Build](https://github.com/Virtlink/latex-paper-template/actions/workflows/docs.yml/badge.svg)](https://github.com/Virtlink/latex-paper-template/actions)
+[![Build](https://github.com/Virtlink/latex-paper-template/actions/workflows/build.yml/badge.svg)](https://github.com/Virtlink/latex-paper-template/actions)
 [![GitHub](https://img.shields.io/github/license/Virtlink/latex-paper-template)](https://github.com/Virtlink/latex-paper-template/blob/main/LICENSE)
 
 This is an opinionated template for LaTeX papers that uses XeLaTeX and BibLaTeX.
