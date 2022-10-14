@@ -46,6 +46,9 @@ To watch the directory for changes and rebuild the paper automatically, invoke:
 make watch
 ```
 
+### GitHub
+If the repository is on GitHub, it automatically builds a new version of the PDF on each push.
+Find the built paper as an artifact attach to each build on Github's _Actions_ page.
 
 ## Bibliography
 There are various tools to manage the bibliography in your paper.
