@@ -48,7 +48,7 @@ make watch
 
 ### GitHub
 If the repository is on GitHub, it automatically builds a new version of the PDF on each push.
-Find the built paper as an artifact attach to each build on Github's _Actions_ page.
+Find the built paper as an artifact ZIP attached to each build on Github's _Actions_ page, such as [the latest artifact](https://nightly.link/Virtlink/latex-paper-template/workflows/build/main/paper.zip).
 
 ## Bibliography
 There are various tools to manage the bibliography in your paper.
