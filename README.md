@@ -20,6 +20,7 @@ git merge upstream/main
 When working in VS Code, install the [LaTeX Workshop](https://github.com/James-Yu/LaTeX-Workshop/) extension. When saving a LaTeX file, the project will rebuild automatically. Refer to the extension's documentation for more information on its usage and configuration.
 
 ### Overleaf
+Just import the Git repository into Overleaf.
 
 ### Other editors
 From a terminal, invoke the Makefile's default target to build the project:
