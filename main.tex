@@ -1,0 +1,81 @@
+
+\documentclass[12pt, a4paper]{article}
+
+% Notation
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{proof}
+
+% Graphics
+\usepackage[a4paper, margin=0.75in]{geometry}
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+
+% Typesetting
+\usepackage{microtype}
+\usepackage{newcomputermodern}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{hyperref}
+\usepackage[dvipsnames]{xcolor}
+
+% References
+\usepackage[backend=biber, style=authoryear, sorting=ynt]{biblatex}
+\usepackage[USenglish]{babel}
+\usepackage{cleveref}
+\usepackage{csquotes}
+
+% Layout
+\usepackage{boxedminipage}
+\usepackage{float}
+
+% Macros
+\usepackage{xspace}
+\newcommand*{\eg}{e.g.\@\xspace}
+\newcommand*{\ie}{i.e.\@\xspace}
+\newcommand{\code}[1]{\texttt{#1}}
+
+% Margin notes
+\newtoggle{enablenotes}
+\toggletrue{enablenotes} % Use `\togglefalse{enablenotes}` to hide margin notes
+\setlength {\marginparwidth }{2cm}
+\iftoggle{enablenotes}{%
+  \usepackage[colorinlistoftodos,textsize=scriptsize]{todonotes}%
+}{%
+  \usepackage[disable]{todonotes}%
+}
+
+% TODOs
+\newcommand{\comm}[3]{\todo[inline,linecolor=#1,backgroundcolor=#1!25,bordercolor=#1]{[#2] #3}\xspace}
+\newcommand{\isaac}[1]{\comm{violet}{I. Newton}{#1}}
+\newcommand{\voltaire}[1]{\comm{green}{F.M. Arouet}{#1}}
+
+% Bibliographies
+\addbibresource{main.bib}
+\addbibresource{references.bib}
+\addbibresource{zotero.bib}
+
+\title{ABS's of LaTeX}
+\author{
+  Newton, I.\\
+  \texttt{isaac@mintmaster.biz}
+  \and
+  Arouet F.M.\\
+  \texttt{li@arovet.fr}
+}
+
+\begin{document}%
+
+\maketitle
+
+\input{000-abstract}
+\input{100-introduction}
+\input{200-contribution}
+\input{300-evaluation}
+\input{400-related-work}
+\input{500-conclusion}
+
+\printbibliography{}
+
+\end{document}
