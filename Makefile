@@ -8,8 +8,8 @@ BUILDDIR    = build
 SNAPDIR     = snapshots
 # Directory for the source archives
 ARCHIVEDIR  = archive
-# Name for source archives
-ARCHIVENAME = paper
+# Name for PDF snapshots and source archives
+SHORTNAME   = mypaper
 # Main LaTeX file
 MAINTEX     = $(SRCDIR)/main.tex
 # Output PDF
@@ -25,7 +25,7 @@ LIVE        = -pvc -view=none -halt-on-error
 all: $(PDF)
 
 # Builds a PDF
-$(BUILDDIR)/%.pdf: $(SRCDIR)/%.tex
+$(BUILDDIR)/%.pdf: $(SRCDIR)/%.tex $(SRCDIR)/%.bib $(SRCDIR)/latexmkrc
 	@echo "Warning: Underfull and overfull box warnings are suppressed!"
 	$(LATEXMK) "$<"
 
@@ -40,47 +40,47 @@ watch: $(MAINTEX)
 # Removes PDF build files
 clean:
 	$(LATEXMK) -C $(BUILDDIR)/main.pdf
-	rm -f $(TARGETDIR)/*.pdf
+	rm -f $(TARGETDIR)/main.pdf
 
 # Removes all build files
 clean-all:
 	rm -rf $(BUILDDIR)/
-	rm -f $(TARGETDIR)/*.pdf
+	rm -f $(TARGETDIR)/main.pdf
 
 # Downloads the latest bibliography from Researchr and fixes it
 bib: clean-bib $(SRCBIB)
 $(SRCBIB):
-	curl -s "https://researchr.org/downloadbibtex/bibliography/$(RESEARCHR)" -o $@
+	curl -s "https://researchr.org/downloadbibtex/bibliography/$(RESEARCHR)/compact" -o $@
 	sed -i '' '1 s/^/% /' $@
 	sed -i '' 's/doi = {http.*\/\(10\..*\)}/doi = {\1}/' $@
 	sed -i '' '/doi = {http.*}/d' $@
 	sed -i '' 's/\&uuml;/ü/' $@
-	@echo "Updated $@ from https://researchr.org/downloadbibtex/bibliography/$(RESEARCHR)"
+	@echo "Updated $@ from https://researchr.org/downloadbibtex/bibliography/$(RESEARCHR)/compact"
 
 # Removes the bibliography
 clean-bib:
 	rm -f $(SRCBIB)
 
-# Copies the latest built PDF to 
+# Copies the latest built PDF to
 snapshot: $(PDF)
 	mkdir -p $(SNAPDIR)
-	cp $(PDF) $(SNAPDIR)/$(shell date '+%Y%m%d%H%M')-$(SNAPSHOT).pdf
+	cp $(PDF) $(SNAPDIR)/$(shell date '+%Y%m%d%H%M')-$(SHORTNAME).pdf
 
 # Creates an archive with the source files
 archive: $(PDF)
 	$(eval TMP := $(shell mktemp -d))
-	mkdir -p $(TMP)/$(ARCHIVENAME)/
-	cp -r $(SRCDIR)/ $(TMP)/$(ARCHIVENAME)/$(SRCDIR)/
-	rm -rf $(TMP)/$(ARCHIVENAME)/$(BUILDDIR)
-	rm -rf $(TMP)/$(ARCHIVENAME)/.[!.]*
-	rm -rf $(TMP)/$(ARCHIVENAME)/$(SNAPDIR)
-	rm -rf $(TMP)/$(ARCHIVENAME)/$(ARCHIVEDIR)
-	cp Makefile $(TMP)/$(ARCHIVENAME)/.
-	cp README.md $(TMP)/$(ARCHIVENAME)/.
-	cp $(BUILDDIR)/*.bbl $(TMP)/$(ARCHIVENAME)/$(SRCDIR)/.
-	cd $(TMP)/ && zip $(ARCHIVENAME).zip -r $(ARCHIVENAME)/
+	mkdir -p $(TMP)/$(SHORTNAME)/
+	cp -r $(SRCDIR)/ $(TMP)/$(SHORTNAME)/$(SRCDIR)/
+	rm -rf $(TMP)/$(SHORTNAME)/$(BUILDDIR)
+	rm -rf $(TMP)/$(SHORTNAME)/.[!.]*
+	rm -rf $(TMP)/$(SHORTNAME)/$(SNAPDIR)
+	rm -rf $(TMP)/$(SHORTNAME)/$(ARCHIVEDIR)
+	cp Makefile $(TMP)/$(SHORTNAME)/.
+	cp README.md $(TMP)/$(SHORTNAME)/.
+	cp $(BUILDDIR)/*.bbl $(TMP)/$(SHORTNAME)/$(SRCDIR)/.
+	cd $(TMP)/ && zip $(SHORTNAME).zip -r $(SHORTNAME)/
 	mkdir -p $(ARCHIVEDIR)/
-	cp $(TMP)/$(ARCHIVENAME).zip $(ARCHIVEDIR)/$(shell date '+%Y%m%d%H%M')-$(ARCHIVENAME).zip
+	cp $(TMP)/$(SHORTNAME).zip $(ARCHIVEDIR)/$(shell date '+%Y%m%d%H%M')-$(SHORTNAME).zip
 	rm -rf $(TMP)
 
 .PHONY: all watch clean bib clean-bib snapshot archive snapshot-with-sources
