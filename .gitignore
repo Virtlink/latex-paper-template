@@ -73,3 +73,5 @@ acs-*.bib
 
 # Misc
 .DS_Store
+!/snapshots/*.pdf
+!/archive/*.zip
