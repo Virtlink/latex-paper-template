@@ -71,7 +71,13 @@ _minted*
 acs-*.bib
 /build/
 
+# Logos
+!lipics-logo-bw.pdf
+!orcid.pdf
+!cc-by.pdf
+
 # Misc
 .DS_Store
 !/snapshots/*.pdf
 !/archive/*.zip
+!/img/*.pdf
