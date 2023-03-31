@@ -12,12 +12,14 @@ ARCHIVEDIR  = archive
 SHORTNAME   = mypaper
 # Main LaTeX file
 MAINTEX     = $(SRCDIR)/main.tex
+# Researchr bibliography file
+SRCBIB      = $(SRCDIR)/researchr.bib
+# Source files
+SRCFILES    = $(SRCDIR)/$(wildcard *.tex)
 # Output PDF
 PDF         = $(TARGETDIR)/main.pdf
 # Researchr bibliography name
 RESEARCHR   = awe-evcs23
-# Researchr bibliography file
-SRCBIB      = $(SRCDIR)/researchr.bib
 
 LATEXMK     = latexmk
 LIVE        = -pvc -view=none -halt-on-error
@@ -25,7 +27,7 @@ LIVE        = -pvc -view=none -halt-on-error
 all: $(PDF)
 
 # Builds a PDF
-$(BUILDDIR)/%.pdf: $(SRCDIR)/%.tex $(SRCDIR)/%.bib $(SRCDIR)/latexmkrc
+$(BUILDDIR)/%.pdf: $(SRCDIR)/%.tex $(SRCDIR)/%.bib $(SRCDIR)/latexmkrc $(SRCFILES)
 	@echo "Warning: Underfull and overfull box warnings are suppressed!"
 	$(LATEXMK) "$<"
 
