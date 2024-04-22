@@ -1,4 +1,4 @@
-name: Build Paper
+name: Build
 
 on:
   push:
@@ -11,13 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      - name: Compile main.tex
-        uses: xu-cheng/latex-action@master
+        uses: actions/checkout@v4
+      - name: Compile
+        uses: xu-cheng/latex-action@v3
         with:
-          root_file: main.tex
-      - name: Upload main.pdf
-        uses: actions/upload-artifact@v3
+          root_file: src/document.tex
+      - name: Upload
+        uses: actions/upload-artifact@v4
         with:
           name: paper
-          path: build/main.pdf
+          path: mypaper.pdf
