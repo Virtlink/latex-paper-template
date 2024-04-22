@@ -6,17 +6,17 @@ LIBDIR      = lib
 BUILDDIR    = build
 # Directory where the PDF is copied
 DOCDIR      = .
-DOCNAME     = refsyn
+DOCNAME     = mypaper
 # The path to the main .tex file
 MAINTEX     = main.tex
 # Directory for the PDF snapshots
 SNAPDIR     = snapshots
 # Prefix for PDF snapshots
-SNAPNAME    = mypaper
+SNAPNAME    = $(DOCNAME)
 # Directory for the source archives
 ARCHIVEDIR  = archive
 # Name for source archives
-ARCHIVENAME = mypaper
+ARCHIVENAME = $(DOCNAME)
 # Researchr bibliography file
 SRCBIB      = $(SRCDIR)/researchr.bib
 # Source files
