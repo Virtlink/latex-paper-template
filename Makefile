@@ -1,91 +1,91 @@
-# Directory with the source files (optionally add extra LaTeX source folders, must end with a colon!)
-SRCDIR      = .
-# Directory where the PDF is copied
-TARGETDIR   = .
-# Directory where the output files are located
+# Directory with the source files
+SRCDIR      = src
+# Directory with the library files
+LIBDIR      = lib
+# Directory where the build files are located
 BUILDDIR    = build
+# Directory where the PDF is copied
+DOCDIR      = .
+DOCNAME     = refsyn
+# The path to the main .tex file
+MAINTEX     = main.tex
 # Directory for the PDF snapshots
 SNAPDIR     = snapshots
+# Prefix for PDF snapshots
+SNAPNAME    = mypaper
 # Directory for the source archives
 ARCHIVEDIR  = archive
-# Name for PDF snapshots and source archives
-SHORTNAME   = mypaper
-# Main LaTeX file
-MAINTEX     = $(SRCDIR)/main.tex
+# Name for source archives
+ARCHIVENAME = mypaper
 # Researchr bibliography file
 SRCBIB      = $(SRCDIR)/researchr.bib
 # Source files
-SRCFILES    = $(SRCDIR)/$(wildcard *.tex)
-# Output PDF
-PDF         = $(TARGETDIR)/main.pdf
+SRCFILES    = $(MAINTEX) $(SRCBIB) \
+	$(wildcard $(SRCDIR)/*.tex) \
+	$(wildcard $(SRCDIR)/*.bib) \
+	$(wildcard $(SRCDIR)/*.png) \
+	$(wildcard $(SRCDIR)/*.cls) \
+	$(wildcard $(SRCDIR)/*.bst) \
+	$(wildcard $(SRCDIR)/*.pdf) \
+	$(wildcard $(LIBDIR)/*) \
+	latexmkrc
 # Researchr bibliography name
 RESEARCHR   = awe-evcs23
 
 LATEXMK     = latexmk
 LIVE        = -pvc -view=none -halt-on-error
+DOCUMENT    = $(DOCDIR)/$(DOCNAME).pdf
 
-all: $(PDF)
+# Build the PDF
+all: $(DOCUMENT)
 
-# Builds a PDF
-$(BUILDDIR)/%.pdf: $(SRCDIR)/%.tex $(SRCDIR)/%.bib $(SRCDIR)/latexmkrc $(SRCFILES)
+# Build a PDF
+$(DOCUMENT): $(MAINTEX) $(SRCFILES)
 	@echo "Warning: Underfull and overfull box warnings are suppressed!"
-	$(LATEXMK) "$<"
+	$(LATEXMK) "$<" -jobname=$(DOCNAME)
 
-# Copies a PDF
-$(TARGETDIR)/%.pdf: $(BUILDDIR)/%.pdf
-	cp "$<" "$@"
-
-# Watches for changes and rebuilds
-watch: $(MAINTEX)
-	$(LATEXMK) $(LIVE) $(MAINTEX)
-
-# Removes PDF build files
-clean:
-	$(LATEXMK) -C $(BUILDDIR)/main.pdf
-	rm -f $(TARGETDIR)/main.pdf
-
-# Removes all build files
-clean-all:
-	rm -rf $(BUILDDIR)/
-	rm -f $(TARGETDIR)/main.pdf
-
-# Downloads the latest bibliography from Researchr and fixes it
+# Download the latest bibliography from Researchr and fix it
 bib: clean-bib $(SRCBIB)
 $(SRCBIB):
-	curl -s "https://researchr.org/downloadbibtex/bibliography/$(RESEARCHR)/compact" -o $@
+	curl -s "https://researchr.org/downloadbibtex/bibliography/$(RESEARCHR)" -o $@
 	sed -i '' '1 s/^/% /' $@
 	sed -i '' 's/doi = {http.*\/\(10\..*\)}/doi = {\1}/' $@
 	sed -i '' '/doi = {http.*}/d' $@
 	sed -i '' 's/\&uuml;/ü/' $@
-	@echo "Updated $@ from https://researchr.org/downloadbibtex/bibliography/$(RESEARCHR)/compact"
+	@echo "Updated $@ from https://researchr.org/downloadbibtex/bibliography/$(RESEARCHR)"
 
-# Removes the bibliography
+# Remove the bibliography
 clean-bib:
-	rm -f $(SRCBIB)
+	-@rm $(SRCBIB)
 
-# Copies the latest built PDF to
-snapshot: $(PDF)
+# Removes PDF build files
+clean:
+	-@$(LATEXMK) -C $(DOCUMENT)
+
+# Removes all build files
+clean-all: clean clean-bib
+	-@rm -r $(BUILDDIR)/
+
+# Watch for changes and rebuild
+watch:
+	$(LATEXMK) $(LIVE) $(MAINTEX) -jobname=$(DOCNAME)
+
+# Copy the latest built PDF to the snapshots directory
+snapshot: $(DOCUMENT)
 	mkdir -p $(SNAPDIR)
-	cp $(PDF) $(SNAPDIR)/$(shell date '+%Y%m%d%H%M')-$(SHORTNAME).pdf
+	cp "$<" $(SNAPDIR)/$(shell date +"%Y%m%dT%H%M%S")-$(SNAPNAME).pdf
 
-# Creates an archive with the source files
-archive: $(PDF)
-	$(eval TMP := $(shell mktemp -d))
-	mkdir -p $(TMP)/$(SHORTNAME)/
-	cp -r $(SRCDIR)/ $(TMP)/$(SHORTNAME)/$(SRCDIR)/
-	rm -rf $(TMP)/$(SHORTNAME)/$(BUILDDIR)
-	rm -rf $(TMP)/$(SHORTNAME)/.[!.]*
-	rm -rf $(TMP)/$(SHORTNAME)/$(SNAPDIR)
-	rm -rf $(TMP)/$(SHORTNAME)/$(ARCHIVEDIR)
-	cp Makefile $(TMP)/$(SHORTNAME)/.
-	cp README.md $(TMP)/$(SHORTNAME)/.
-	cp $(BUILDDIR)/*.bbl $(TMP)/$(SHORTNAME)/$(SRCDIR)/.
-	cd $(TMP)/ && zip $(SHORTNAME).zip -r $(SHORTNAME)/
-	mkdir -p $(ARCHIVEDIR)/
-	cp $(TMP)/$(SHORTNAME).zip $(ARCHIVEDIR)/$(shell date '+%Y%m%d%H%M')-$(SHORTNAME).zip
-	rm -rf $(TMP)
+# Create an archive with the source files
+archive: $(DOCUMENT)
+	$(eval ARCHIVEFILE := $(abspath $(ARCHIVEDIR)/$(shell date '+%Y%m%d%H%M')-$(ARCHIVENAME).zip))
+	mkdir -p $(ARCHIVEDIR)
+	-@rm $(ARCHIVEFILE) 2> /dev/null
+	cd $(SRCDIR)     && zip        $(ARCHIVEFILE) $(shell cd $(SRCDIR)     && find . -type f -name '*.tex' -o -name '*.bib' -o -name '*.png' -o -name '*.cls' -o -name '*.bst' -o -name '*.pdf')
+	cd $(LIBDIR)     && zip --grow $(ARCHIVEFILE) $(shell cd $(LIBDIR)     && find . -type f)
+	cd $(BUILDDIR)   && zip --grow $(ARCHIVEFILE) $(shell cd $(BUILDDIR)   && find . -type f -name '*.bbl')
+	cd .                zip --grow $(ARCHIVEFILE) $(shell cd .             && find . -type f -maxdepth 1 -name '*.tex' -o -name 'README.md' -o -name 'Makefile' -o -name 'latexmkrc')
 
-.PHONY: all watch clean bib clean-bib snapshot archive snapshot-with-sources
+.PHONY: all bib clean-bib clean clean-all watch snapshot archive
 .SILENT:
 .SUFFIXES: .pdf
-.PRECIOUS: $(PDF) $(BUILDDIR)/main.pdf
+.PRECIOUS: $(DOCUMENT)
