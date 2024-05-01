@@ -1,34 +1,44 @@
 {
+  "[tex]": {
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 120,
+    "editor.renderWhitespace": "all",
+    "editor.tabSize": 2,
+    "editor.indentSize": "tabSize",
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false
+  },
   "[latex]": {
-      "editor.wordWrap": "wordWrapColumn",
-      "editor.wordWrapColumn": 120,
-      "editor.renderWhitespace": "all",
-      "editor.tabSize": 2,
-      "editor.insertSpaces": true,
-      "editor.detectIndentation": false
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 120,
+    "editor.renderWhitespace": "all",
+    "editor.tabSize": 2,
+    "editor.indentSize": "tabSize",
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false
   },
   "latex-workshop.latex.jobname": "refsyn",
   "latex-workshop.latex.autoBuild.run": "onSave",
   "latex-workshop.latex.recipes": [
-      {
-          "name": "latexmk 🔃",
-          "tools": [
-              "latexmk"
-          ]
-      }
+    {
+      "name": "latexmk 🔃",
+      "tools": [
+        "latexmk"
+      ]
+    }
   ],
   "latex-workshop.latex.tools": [
-      {
-        "name": "latexmk",
-        "command": "latexmk",
-        "args": [
-          "-synctex=1",
-          "-interaction=nonstopmode",
-          "-file-line-error",
-          "-jobname=refsyn",
-          "%DOC%"
-        ],
-        "env": {}
-      }
-    ]
+    {
+      "name": "latexmk",
+      "command": "latexmk",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-jobname=refsyn",
+        "%DOC%"
+      ],
+      "env": {}
+    }
+  ]
 }
