@@ -1,19 +1,16 @@
-\documentclass[12pt, a4paper]{article}
+\documentclass[acmsmall,screen,natbib=false]{acmart}
 
 % Notation
 \usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{mathtools}
 \usepackage{proof}
+\usepackage{mathpartir}
+\usepackage{stmaryrd}
 
 % Graphics
-\usepackage[a4paper, margin=0.75in]{geometry}
-\usepackage{graphicx}
+\usepackage{tikz}
 \graphicspath{ {./img/} }
 
 % Typesetting
-\usepackage{microtype}
-\usepackage{newcomputermodern}
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{hyperref}
@@ -55,15 +52,26 @@
 \addbibresource{references.bib}
 \addbibresource{zotero.bib}
 
+% Frontmatter
 \title{ABS's of LaTeX}
-\author{
-  Newton, I.\\
-  \texttt{isaac@mintmaster.biz}
-  \and
-  Arouet F.M.\\
-  \texttt{li@arovet.fr}
-}
 
+\author{I. Newton}
+\affiliation{%
+  \institution{Royal Mint}%
+  \city{London}%
+  \country{United Kingdom}%
+}
+\email{isaac@mintmaster.biz}
+
+\author{F. M. Arouet}
+\affiliation{%
+  \institution{Bastille Saint-Antoine}%
+  \city{Paris}%
+  \country{France}%
+}
+\email{li@arovet.fr}
+
+% Content
 \begin{document}%
 
 \maketitle
