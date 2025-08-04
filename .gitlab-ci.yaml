@@ -1,0 +1,12 @@
+---
+image: texlive/texlive:latest
+
+paper:
+  stage: build
+  only:
+    - main
+  script:
+    - make
+  artifacts:
+    paths:
+      - main.pdf
