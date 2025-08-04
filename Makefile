@@ -6,7 +6,7 @@ LIBDIR      = lib
 BUILDDIR    = build
 # Directory where the PDF is copied
 DOCDIR      = .
-DOCNAME     = mypaper
+DOCNAME     = main
 # The path to the main .tex file
 MAINTEX     = main.tex
 # Directory for the PDF snapshots
