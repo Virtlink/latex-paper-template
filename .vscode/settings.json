@@ -17,7 +17,7 @@
     "editor.insertSpaces": true,
     "editor.detectIndentation": false
   },
-  "latex-workshop.latex.jobname": "refsyn",
+  "latex-workshop.latex.jobname": "main",
   "latex-workshop.latex.autoBuild.run": "onSave",
   "latex-workshop.latex.recipes": [
     {
@@ -35,7 +35,7 @@
         "-synctex=1",
         "-interaction=nonstopmode",
         "-file-line-error",
-        "-jobname=refsyn",
+        "-jobname=main",
         "%DOC%"
       ],
       "env": {}
