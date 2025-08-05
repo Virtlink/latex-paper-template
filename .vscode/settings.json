@@ -32,9 +32,6 @@
       "name": "latexmk",
       "command": "latexmk",
       "args": [
-        "-synctex=1",
-        "-interaction=nonstopmode",
-        "-file-line-error",
         "-jobname=main",
         "%DOC%"
       ],
