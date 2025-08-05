@@ -58,7 +58,7 @@ bib: clean-bib $(SRCBIBS)
 
 # Remove the bibliographies
 clean-bib:
-	-@rm $(SRCBIBS)
+	-@rm $(SRCBIBS) 2> /dev/null
 
 # Removes PDF build files
 clean:
