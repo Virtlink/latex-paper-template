@@ -8,7 +8,7 @@ BUILDDIR    = build
 DOCDIR      = .
 DOCNAME     = main
 # The path to the main .tex file
-MAINTEX     = main.tex
+MAINTEX     = $(DOCNAME).tex
 # Directory for the PDF snapshots
 SNAPDIR     = snapshots
 # Prefix for PDF snapshots
@@ -17,8 +17,9 @@ SNAPNAME    = $(DOCNAME)
 ARCHIVEDIR  = archive
 # Name for source archives
 ARCHIVENAME = $(DOCNAME)
-# Researchr bibliography file
-SRCBIB      = $(SRCDIR)/researchr.bib
+# Researchr bibliography files
+SRCBIBS     = \
+	$(SRCDIR)/awe-evcs23.bib
 # Source files
 SRCFILES    = $(MAINTEX) $(SRCBIB) \
 	$(wildcard $(SRCDIR)/*.tex) \
@@ -29,8 +30,6 @@ SRCFILES    = $(MAINTEX) $(SRCBIB) \
 	$(wildcard $(SRCDIR)/*.pdf) \
 	$(wildcard $(LIBDIR)/*) \
 	latexmkrc
-# Researchr bibliography name
-RESEARCHR   = awe-evcs23
 
 LATEXMK     = latexmk
 LIVE        = -pvc -view=none -halt-on-error
@@ -45,19 +44,21 @@ $(DOCUMENT): $(MAINTEX) $(SRCFILES) aux-dirs
 	$(LATEXMK) "$<" -jobname=$(DOCNAME)
 	@echo "Done building $@"
 
-# Download the latest bibliography from Researchr and fix it
-bib: clean-bib $(SRCBIB)
-$(SRCBIB):
-	curl -s "https://researchr.org/downloadbibtex/bibliography/$(RESEARCHR)" -o $@
+# Download the latest bibliographies from Researchr and fix them
+bib: clean-bib $(SRCBIBS)
+
+# Download a bibliography from Researchr and fix it
+%.bib:
+	curl -s "https://researchr.org/downloadbibtex/bibliography/$(notdir $*)" -o $@
 	sed -i '' '1 s/^/% /' $@
 	sed -i '' 's/doi = {http.*\/\(10\..*\)}/doi = {\1}/' $@
 	sed -i '' '/doi = {http.*}/d' $@
 	sed -i '' 's/\&uuml;/ü/' $@
-	@echo "Updated $@ from https://researchr.org/downloadbibtex/bibliography/$(RESEARCHR)"
+	@echo "Updated $@ from https://researchr.org/downloadbibtex/bibliography/$(notdir $*)"
 
-# Remove the bibliography
+# Remove the bibliographies
 clean-bib:
-	-@rm $(SRCBIB)
+	-@rm $(SRCBIBS)
 
 # Removes PDF build files
 clean:
