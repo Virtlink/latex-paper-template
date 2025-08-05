@@ -40,9 +40,10 @@ DOCUMENT    = $(DOCDIR)/$(DOCNAME).pdf
 all: $(DOCUMENT)
 
 # Build a PDF
-$(DOCUMENT): $(MAINTEX) $(SRCFILES)
+$(DOCUMENT): $(MAINTEX) $(SRCFILES) aux-dirs
 	@echo "Warning: Underfull and overfull box warnings are suppressed!"
 	$(LATEXMK) "$<" -jobname=$(DOCNAME)
+	@echo "Done building $@"
 
 # Download the latest bibliography from Researchr and fix it
 bib: clean-bib $(SRCBIB)
@@ -85,7 +86,12 @@ archive: $(DOCUMENT)
 	cd $(BUILDDIR)   && zip --grow $(ARCHIVEFILE) $(shell cd $(BUILDDIR)   && find . -type f -name '*.bbl')
 	cd .                zip --grow $(ARCHIVEFILE) $(shell cd .             && find . -type f -maxdepth 1 -name '*.tex' -o -name 'README.md' -o -name 'Makefile' -o -name 'latexmkrc')
 
-.PHONY: all bib clean-bib clean clean-all watch snapshot archive
+# Create auxiliary directories
+aux-dirs:
+	@echo "Creating auxiliary directories..."
+	./create-aux-dirs.sh
+
+.PHONY: all bib clean-bib clean clean-all watch snapshot archive aux-dirs
 .SILENT:
 .SUFFIXES: .pdf
 .PRECIOUS: $(DOCUMENT)
