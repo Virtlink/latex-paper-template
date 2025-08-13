@@ -25,4 +25,4 @@ $clean_ext .= '%R.ist %R.xdy';
 
 # Command-line for XeLaTeX
 # -no-pdf: https://tex.stackexchange.com/a/408789/108670
-$pdflatex = "texfot --ignore '^Underfull' --ignore '^Overfull' xelatex -file-line-error -interaction=nonstopmode -synctex=1 -no-pdf %O %S";
+$xelatex = "texfot --ignore '^Underfull' --ignore '^Overfull' xelatex -file-line-error -interaction=nonstopmode -synctex=1 -no-pdf %O %S";
