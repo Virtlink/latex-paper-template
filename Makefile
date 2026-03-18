@@ -90,24 +90,6 @@ $(DOCUMENT): $(MAINTEX) $(SRCFILES) aux-dirs
 	@echo "${OK} Done building $@"
 
 
-.PHONY: bib
-bib: clean-bib $(SRCBIBS)		## Download the latest bibliographies from Researchr and fix them
-
-# Download a bibliography from Researchr and fix it
-%.bib:
-	curl -s "https://researchr.org/downloadbibtex/bibliography/$(notdir $*)" -o $@
-	sed -i '' '1 s/^/% /' $@
-	sed -i '' 's/doi = {http.*\/\(10\..*\)}/doi = {\1}/' $@
-	sed -i '' '/doi = {http.*}/d' $@
-	sed -i '' 's/\&uuml;/ü/' $@
-	@echo "Updated $@ from https://researchr.org/downloadbibtex/bibliography/$(notdir $*)"
-
-
-.PHONY: clean-bib
-clean-bib:		## Remove the bibliographies
-	-@rm $(SRCBIBS) 2> /dev/null
-
-
 .PHONY: clean
 clean:			## Removes PDF build files
 	@echo "${INFO} Cleaning auxiliary files and $(DOCUMENT)..."
@@ -116,7 +98,7 @@ clean:			## Removes PDF build files
 
 
 .PHONY: clean-all
-clean-all: clean clean-bib		## Removes all build files
+clean-all: clean clean-bib		## Removes all build files and downloaded bibliographies
 
 
 .PHONY: clean-force
@@ -215,6 +197,29 @@ clean-force:		## Force remove all auxillary files without using latexmk
 watch:					## Watch for changes and rebuild
 	@echo "Watching for changes..."
 	$(LATEXMK) $(LIVE) $(MAINTEX) -jobname=$(DOCNAME)
+
+
+### =============================================================================
+##@ Bibliographies
+### =============================================================================
+
+.PHONY: bib
+bib: clean-bib $(SRCBIBS)		## Download the latest bibliographies from Researchr and fix them
+
+# Download a bibliography from Researchr and fix it
+%.bib:
+	curl -s "https://researchr.org/downloadbibtex/bibliography/$(notdir $*)" -o $@
+	sed -i '' '1 s/^/% /' $@
+	sed -i '' 's/doi = {http.*\/\(10\..*\)}/doi = {\1}/' $@
+	sed -i '' '/doi = {http.*}/d' $@
+	sed -i '' 's/\&uuml;/ü/' $@
+	@echo "Updated $@ from https://researchr.org/downloadbibtex/bibliography/$(notdir $*)"
+
+
+.PHONY: clean-bib
+clean-bib:		## Remove the bibliographies
+	-@rm $(SRCBIBS) 2> /dev/null
+
 
 
 ### =============================================================================
