@@ -1,3 +1,14 @@
+# Make settings
+.SHELLFLAGS   := -eu -o pipefail -c
+.DEFAULT_GOAL := help
+.ONESHELL:
+.DELETE_ON_ERROR:
+.SILENT:
+MAKEFLAGS += --no-print-directory
+MAKEFLAGS += --no-builtin-rules
+MAKEFLAGS += --warn-undefined-variables
+.SUFFIXES: .pdf
+
 # Directory with the source files
 SRCDIR      = src
 # Directory with the library files
@@ -34,18 +45,53 @@ SRCFILES    = $(MAINTEX) $(SRCBIB) \
 LATEXMK     = latexmk
 LIVE        = -pvc -view=none -halt-on-error
 DOCUMENT    = $(DOCDIR)/$(DOCNAME).pdf
+.PRECIOUS: $(DOCUMENT)
 
-# Build the PDF
-all: $(DOCUMENT)
 
-# Build a PDF
+# Colors and formatting
+NC     := $(shell printf "\033[0m")
+BOLD   := $(shell printf "\033[1m")
+DIM    := $(shell printf "\033[2m")
+ITALIC := $(shell printf "\033[3m")
+ULINE  := $(shell printf "\033[4m")
+RED    := $(shell printf "\033[1;31m")
+GREEN  := $(shell printf "\033[1;32m")
+YELLOW := $(shell printf "\033[1;33m")
+BLUE   := $(shell printf "\033[1;34m")
+MAGENTA:= $(shell printf "\033[1;35m")
+CYAN   := $(shell printf "\033[1;36m")
+INFO   := $(shell printf "$(BLUE)ℹ$(NC)")
+OK     := $(shell printf "$(GREEN)✓$(NC)")
+WARN   := $(shell printf "$(YELLOW)⚠$(NC)")
+ERROR  := $(shell printf "$(RED)✖$(NC)")
+
+# Note: targets followed by `##` are documented in the help output
+#       lines starting with `##@` are used to group targets in the help output
+.PHONY: help
+help:                                  ## Display this help text for this Makefile
+	awk 'BEGIN {FS = ":.*##";\
+ 		printf "\nUsage:  make ${CYAN}<target>${NC}\n"}\
+ 		/^[a-zA-Z0-9_-]+:.*?##/ { printf "  ${CYAN}%-15s${NC} %s\n", $$1, $$2 }\
+ 		/^##@/ { printf "\n${BOLD}%s${NC}\n", substr($$0, 5) } '\
+ 		$(MAKEFILE_LIST)
+
+
+
+### =============================================================================
+##@ Development
+### =============================================================================
+
+.PHONY: all
+all: $(DOCUMENT)		## Build the PDF
+
 $(DOCUMENT): $(MAINTEX) $(SRCFILES) aux-dirs
-	@echo "Warning: Underfull and overfull box warnings are suppressed!"
+	@echo "${WARN} Note: underfull and overfull box warnings are suppressed"
 	$(LATEXMK) "$<" -jobname=$(DOCNAME)
-	@echo "Done building $@"
+	@echo "${OK} Done building $@"
 
-# Download the latest bibliographies from Researchr and fix them
-bib: clean-bib $(SRCBIBS)
+
+.PHONY: bib
+bib: clean-bib $(SRCBIBS)		## Download the latest bibliographies from Researchr and fix them
 
 # Download a bibliography from Researchr and fix it
 %.bib:
@@ -56,19 +102,26 @@ bib: clean-bib $(SRCBIBS)
 	sed -i '' 's/\&uuml;/ü/' $@
 	@echo "Updated $@ from https://researchr.org/downloadbibtex/bibliography/$(notdir $*)"
 
-# Remove the bibliographies
-clean-bib:
+
+.PHONY: clean-bib
+clean-bib:		## Remove the bibliographies
 	-@rm $(SRCBIBS) 2> /dev/null
 
-# Removes PDF build files
-clean:
+
+.PHONY: clean
+clean:			## Removes PDF build files
+	@echo "${INFO} Cleaning auxiliary files and $(DOCUMENT)..."
 	-@$(LATEXMK) -C $(DOCUMENT)
+	@echo "${OK} Auxiliary files and $(DOCUMENT) cleaned."
 
-# Removes all build files
-clean-all: clean clean-bib
 
-# Force remove all auxillary files without using latexmk
-clean-force:
+.PHONY: clean-all
+clean-all: clean clean-bib		## Removes all build files
+
+
+.PHONY: clean-force
+clean-force:		## Force remove all auxillary files without using latexmk
+	@echo "Force-removing auxiliary files and $(DOCUMENT)..."
 	-@rm $(DOCUMENT)
 	-@find . -name "_minted*" -type f -delete
 	-@find . -name ".*.lb" -type f -delete
@@ -155,18 +208,31 @@ clean-force:
 	-@find . -name "*.xcp" -type f -delete
 	-@find . -name "*.xdv" -type f -delete
 	-@find . -name "acs-*.bib" -type f -delete
+	@echo "All auxiliary files and $(DOCUMENT) have been force-removed."
 
-# Watch for changes and rebuild
-watch:
+
+.PHONY: watch
+watch:					## Watch for changes and rebuild
+	@echo "Watching for changes..."
 	$(LATEXMK) $(LIVE) $(MAINTEX) -jobname=$(DOCNAME)
 
-# Copy the latest built PDF to the snapshots directory
-snapshot: $(DOCUMENT)
-	mkdir -p $(SNAPDIR)
-	cp "$<" $(SNAPDIR)/$(shell date +"%Y%m%dT%H%M%S")-$(SNAPNAME).pdf
 
-# Create an archive with the source files
-archive: $(DOCUMENT)
+### =============================================================================
+##@ Archiving
+### =============================================================================
+
+.PHONY: snapshot
+snapshot: $(DOCUMENT)		## Copy the latest built PDF to the snapshots directory
+	@echo "${INFO} Creating a snapshot of the PDF..."
+	$(eval SNAPSHOTFILE := $(shell date +"%Y%m%dT%H%M%S")-$(SNAPNAME).pdf)
+	mkdir -p $(SNAPDIR)
+	cp "$<" $(SNAPDIR)/$(SNAPSHOTFILE)
+	@echo "${OK} Snapshot created at: $(SNAPDIR)/$(SNAPSHOTFILE)"
+
+
+.PHONY: archive
+archive: $(DOCUMENT)		## Create an archive with the source files
+	@echo "${INFO} Archiving source files as ZIP..."
 	$(eval ARCHIVEFILE := $(abspath $(ARCHIVEDIR)/$(shell date '+%Y%m%d%H%M')-$(ARCHIVENAME).zip))
 	mkdir -p $(ARCHIVEDIR)
 	-@rm $(ARCHIVEFILE) 2> /dev/null
@@ -174,13 +240,17 @@ archive: $(DOCUMENT)
 	cd $(LIBDIR)     && zip --grow $(ARCHIVEFILE) $(shell cd $(LIBDIR)     && find . -type f)
 	cd $(BUILDDIR)   && zip --grow $(ARCHIVEFILE) $(shell cd $(BUILDDIR)   && find . -type f -name '*.bbl')
 	cd .                zip --grow $(ARCHIVEFILE) $(shell cd .             && find . -type f -maxdepth 1 -name '*.tex' -o -name 'README.md' -o -name 'Makefile' -o -name 'latexmkrc')
+	@echo "${OK} Source files archived at: $(ARCHIVEFILE)"
 
-# Create auxiliary directories
-aux-dirs:
-	@echo "Creating auxiliary directories..."
+
+### =============================================================================
+##@ Preparation
+### =============================================================================
+
+.PHONY: aux-dirs
+aux-dirs:	## Create auxiliary directories for the build process
+	@echo "${INFO} Creating auxiliary directories..."
 	./create-aux-dirs.sh
+	@echo "${OK} Auxiliary directories created."
 
-.PHONY: all bib clean-bib clean clean-all clean-force watch snapshot archive aux-dirs
-.SILENT:
-.SUFFIXES: .pdf
-.PRECIOUS: $(DOCUMENT)
+
