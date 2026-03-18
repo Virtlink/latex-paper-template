@@ -88,7 +88,6 @@ clean-force:
 	-@find . -name "*.bit" -type f -delete
 	-@find . -name "*.blg" -type f -delete
 	-@find . -name "*.brf" -type f -delete
-	-@find . -name "*.bst" -type f -delete
 	-@find . -name "*.cb" -type f -delete
 	-@find . -name "*.cb2" -type f -delete
 	-@find . -name "*.cpt" -type f -delete
